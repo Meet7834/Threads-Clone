@@ -1,0 +1,25 @@
+### GET /feed
+GET http://localhost:8080/posts/feed
+
+### POST /create
+POST http://localhost:8080/posts/create
+Content-Type: application/json
+
+{
+  "postedBy" : "65e9e759b83c07088133f0e9",
+  "text": "Trinity, I am coming for you!"
+}
+
+### POST /reply/:id
+POST http://localhost:8080/posts/reply/65ea0edc95e3496575fea513
+Content-Type: application/json
+
+{
+  "text": "is it?"
+}
+
+### PUT /like/:id
+PUT http://localhost:8080/posts/like/65ea0edc95e3496575fea513
+
+### DELETE /:id
+DELETE http://localhost:8080/posts/65ea0c6d2315becfad2cac51
