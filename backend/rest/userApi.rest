@@ -1,0 +1,33 @@
+### POST /login
+POST http://localhost:8080/users/login
+Content-Type: application/json
+
+{
+  "username" : "dex",
+  "password": "helloDexterMorgan"
+}
+
+### POST /login
+POST http://localhost:8080/users/login
+Content-Type: application/json
+
+{
+  "username" : "karan",
+  "password": "karan"
+}
+
+### PUT /update
+PUT http://localhost:8080/users/update/65e9e733b83c07088133f0e6
+Content-Type: application/json
+
+{
+  "username" : "dex",
+  "password": "helloDexterMorgan"
+}
+
+### POST /logout
+POST http://localhost:8080/users/logout
+Content-Type: application/json
+
+### POST /follow/:id
+POST http://localhost:8080/users/follow/65e9e759b83c07088133f0e9

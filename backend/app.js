@@ -1,24 +1,28 @@
-import express from 'express'
-import morgan from 'morgan'
-import dotenv from 'dotenv'
+import express from 'express';
+import morgan from 'morgan';
+import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
-import connectDB from './db/connectDB.js'
-import userRoutes from './routes/userRoutes.js'
+import connectDB from './db/connectDB.js';
+import userRoutes from './routes/userRoutes.js';
+import postRoutes from './routes/postRoutes.js';
 
-dotenv.config();
-connectDB();
+dotenv.config(); // configuring .env file
+connectDB(); // connect to db
 
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-app.use(morgan('tiny'));
-app.use(express.json());
+// middlewares:
+app.use(morgan('tiny')); // this module logs the api requests to the console
+app.use(express.json()); 
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 // Routes
-app.use('/api/users', userRoutes);
+app.use('/users', userRoutes);
+app.use('/posts', postRoutes);
 
+// start the server
 app.listen(PORT, () => {
     console.log(`Server started on port: ${PORT}`);
 })

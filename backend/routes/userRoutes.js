@@ -1,15 +1,21 @@
 import express from "express";
-import { loginUser, signUpUser, logOutUser, followUnfollowUser } from '../controllers/userController.js'
+import { getUser, loginUser, signUpUser, logOutUser, followUnfollowUser, updateUser } from '../controllers/userController.js'
 import checkAuth from "../middlewares/checkAuth.js";
 
 const router = express.Router();
 
-// POST routes
+// GET routes:
+router.get('/profile/:username', getUser);
+
+// POST routes:
 router.post('/login', loginUser);
 router.post('/signup', signUpUser);
 router.post('/logout', logOutUser);
 
-// FOLLOW routes
+// FOLLOW routes:
 router.post('/follow/:id', checkAuth, followUnfollowUser);
+
+// PUT routes:
+router.put('/update/:id', checkAuth, updateUser);
 
 export default router;
