@@ -6,6 +6,7 @@ const getUser = async (req, res) => {
     const { username } = req.params;
 
     try {
+        // do not give password or updatedAt in the res
         const user = await User.findOne({ username }).select('-password').select('-updatedAt');
         if (!user) return res.status(400).json({ message: 'User not found' });
 
@@ -25,9 +26,11 @@ const signUpUser = async (req, res) => {
             return res.status(400).json({ message: 'User already exists' });
         }
 
+        // genereate salt and then hash the password with salt
         const salt = await bcrypt.genSalt(10);
         const hashedPass = await bcrypt.hash(password, salt);
 
+        // make new user and save it to database
         const newUser = new User({
             name,
             email,
@@ -37,8 +40,7 @@ const signUpUser = async (req, res) => {
         await newUser.save();
 
         if (newUser) {
-
-            setCookie(newUser._id, res);
+            setCookie(newUser._id, res); // genereate jwt token and set cookie for the user
 
             res.status(201).json({
                 _id: newUser._id,
@@ -65,7 +67,7 @@ const loginUser = async (req, res) => {
         if (!user || !isPassCorrect)
             return res.status(400).json({ message: 'Invalid username or password' });
 
-        setCookie(user._id, res);
+        setCookie(user._id, res); // set cookie to the browser
 
         res.status(200).json({
             _id: user._id,
@@ -82,7 +84,7 @@ const loginUser = async (req, res) => {
 
 const logOutUser = (req, res) => {
     try {
-        res.cookie('jwt', "", { maxAge: 1 });
+        res.cookie('jwt', "", { maxAge: 1 }); // remove cookie from the brwoser
         res.status(200).json({ message: 'User logged out succesfully' });
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -125,18 +127,21 @@ const updateUser = async (req, res) => {
     const { name, email, username, password, profilePic, bio } = req.body;
     const userId = req.user._id;
 
+    // if user is trying to update someone else's profile
     if (req.params.id !== userId.toString()) return res.status(401).json({ message: `You can't update other user's profile.` })
 
     try {
         let user = await User.findById(userId);
         if (!user) return res.status(400).json({ message: 'User not found' });
 
+        // generate new hashed password
         if (password) {
             const salt = await bcrypt.genSalt(10);
             const hashedPass = await bcrypt.hash(password, salt);
             user.password = hashedPass;
         }
 
+        // check all the changes for the user data
         user.name = name || user.name;
         user.email = email || user.email;
         user.username = username || user.username;
