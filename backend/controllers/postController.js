@@ -1,5 +1,5 @@
-import User from "../models/userModel.js";
 import Post from '../models/postModel.js';
+import User from "../models/userModel.js";
 
 const getFeedPosts = async (req, res) => {
     try {
@@ -50,7 +50,7 @@ const createPost = async (req, res) => {
         }
 
         // if the user who is creating the post doesn't match the logged in user
-        if (user._id.toString() !== req.user._id.toString()) { 
+        if (user._id.toString() !== req.user._id.toString()) {
             return res.status(401).json({ message: 'Unauthorized to create post' });
         }
 
@@ -152,4 +152,4 @@ const replyToPost = async (req, res) => {
     }
 }
 
-export { getFeedPosts, getPostById, createPost, replyToPost, likePost, deletePost };
+export { createPost, deletePost, getFeedPosts, getPostById, likePost, replyToPost };
