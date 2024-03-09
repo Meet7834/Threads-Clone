@@ -5,7 +5,7 @@ import checkAuth from "../middlewares/checkAuth.js";
 const router = express.Router();
 
 // GET routes:
-router.get('/profile/:username', getUser);
+router.get('/profile/:query', getUser);
 
 // POST routes:
 router.post('/login', loginUser);
