@@ -5,6 +5,8 @@ import morgan from 'morgan';
 import connectDB from './db/connectDB.js';
 import postRoutes from './routes/postRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+import { v2 as cloudinary } from 'cloudinary';
+import bodyParser from 'body-parser';
 
 dotenv.config(); // configuring .env file
 connectDB(); // connect to db
@@ -12,11 +14,19 @@ connectDB(); // connect to db
 const app = express();
 const PORT = process.env.PORT || 8080;
 
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
 // middlewares:
-app.use(morgan('tiny')); // this module logs the api requests to the console
+app.use(bodyParser.json({ limit: '10mb' }));
+app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(morgan('tiny')); // this module logs the api requests to the console
 
 // Routes
 app.use('/api/users', userRoutes);

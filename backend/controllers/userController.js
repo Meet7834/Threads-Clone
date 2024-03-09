@@ -1,6 +1,7 @@
 import User from '../models/userModel.js'
 import bcrypt from 'bcryptjs'
 import setCookie from '../utils/helpers/setCookie.js';
+import { v2 as cloudinary } from 'cloudinary'
 
 const getUser = async (req, res) => {
     const { username } = req.params;
@@ -47,6 +48,8 @@ const signUpUser = async (req, res) => {
                 name: newUser.name,
                 username: newUser.username,
                 email: newUser.email,
+                bio: newUser.bio,
+                profilePic: newUser.profilePic,
             });
         } else {
             res.status(400).json({ error: 'Invalid user data' })
@@ -73,7 +76,9 @@ const loginUser = async (req, res) => {
             _id: user._id,
             name: user.name,
             email: user.email,
-            username: user.username
+            username: user.username,
+            bio: user.bio,
+            profilePic: user.profilePic,
         })
 
     } catch (err) {
@@ -124,7 +129,8 @@ const followUnfollowUser = async (req, res) => { // toggle follow/unfollow
 }
 
 const updateUser = async (req, res) => {
-    const { name, email, username, password, profilePic, bio } = req.body;
+    const { name, email, username, password, bio } = req.body;
+    let { profilePic } = req.body;
     const userId = req.user._id;
 
     // if user is trying to update someone else's profile
@@ -141,6 +147,15 @@ const updateUser = async (req, res) => {
             user.password = hashedPass;
         }
 
+        if (profilePic) {
+            if (user.profilePic) {
+                await cloudinary.uploader.destroy(user.profilePic.split("/").pop().split(".")[0]);
+            }
+
+            const uploadedResponse = await cloudinary.uploader.upload(profilePic);
+            profilePic = uploadedResponse.secure_url;
+        }
+
         // check all the changes for the user data
         user.name = name || user.name;
         user.email = email || user.email;
@@ -149,6 +164,9 @@ const updateUser = async (req, res) => {
         user.bio = bio || user.bio;
 
         user = await user.save();
+
+        // password should be null when sent in the response
+        user.password = null;
         res.status(200).json({ message: 'Profile updated succefully', user });
     } catch (err) {
         res.status(500).json({ error: err.message });
