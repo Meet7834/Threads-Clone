@@ -16,6 +16,7 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { useRecoilValue } from "recoil";
+import { Navigate, useNavigate } from 'react-router-dom'
 import userAtom from "../atoms/userAtom";
 import useShowToast from "../hooks/useShowToast";
 
@@ -27,8 +28,10 @@ const Actions = ({ post: post_ }) => {
 	const [isReplying, setIsReplying] = useState(false);
 	const [reply, setReply] = useState("");
 
+
 	const showToast = useShowToast();
 	const { isOpen, onOpen, onClose } = useDisclosure();
+	const navigate = useNavigate();
 
 	const handleLikeAndUnlike = async () => {
 		if (!user) return showToast("Error", "You must be logged in to like a post", "error");
@@ -78,6 +81,7 @@ const Actions = ({ post: post_ }) => {
 			setPost({ ...post, replies: [...post.replies, data.reply] });
 			showToast("Success", "Reply posted successfully", "success");
 			onClose();
+			navigate(0);
 			setReply("");
 		} catch (error) {
 			showToast("Error", error.message, "error");

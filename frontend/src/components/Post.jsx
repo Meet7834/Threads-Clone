@@ -112,6 +112,7 @@ const Post = ({ post, postedBy }) => {
 						)}
 					</Box>
 				</Flex>
+				
 				<Flex flex={1} flexDirection={"column"} gap={2}>
 					<Flex justifyContent={"space-between"} w={"full"}>
 						<Flex w={"full"} alignItems={"center"}>
