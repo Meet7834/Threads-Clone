@@ -21,9 +21,7 @@ cloudinary.config({
 });
 
 // middlewares:
-app.use(bodyParser.json({ limit: '10mb' }));
-app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
-app.use(express.json());
+app.use(express.json({ limit: "50mb" })); // To parse JSON data in the req.body
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(morgan('tiny')); // this module logs the api requests to the console

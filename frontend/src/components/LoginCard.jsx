@@ -24,13 +24,17 @@ export default function LoginCard() {
     const [showPassword, setShowPassword] = useState(false);
     const setAuthScreen = useSetRecoilState(authScreenAtom);
     const setUser = useSetRecoilState(userAtom);
+    const [loading, setLoading] = useState(false);
 
     const [inputs, setInputs] = useState({
         username: "",
         password: "",
     });
+
     const showToast = useShowToast();
+
     const handleLogin = async () => {
+        setLoading(true);
         try {
             const res = await fetch("/api/users/login", {
                 method: "POST",
@@ -39,18 +43,22 @@ export default function LoginCard() {
                 },
                 body: JSON.stringify(inputs),
             });
+
             const data = await res.json();
             if (data.error) {
                 showToast("Error", data.error, "error");
                 return;
             }
-            console.log(data);
+
             localStorage.setItem("user-threads", JSON.stringify(data));
             setUser(data);
         } catch (error) {
             showToast("Error", error, "error");
+        } finally {
+            setLoading(false);
         }
     };
+
     return (
         <Flex align={"center"} justify={"center"}>
             <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
@@ -106,6 +114,7 @@ export default function LoginCard() {
                                     bg: useColorModeValue("gray.700", "gray.800"),
                                 }}
                                 onClick={handleLogin}
+                                isLoading={loading}
                             >
                                 Login
                             </Button>
