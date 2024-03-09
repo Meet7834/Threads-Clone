@@ -4,22 +4,23 @@ import { BsInstagram } from "react-icons/bs";
 import { CgMoreO } from "react-icons/cg";
 import { Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/menu";
 import { Portal } from "@chakra-ui/portal";
+import { useToast } from "@chakra-ui/react";
 
 const UserHeader = () => {
-    // const toast = useToast();
+    const toast = useToast();
 
-    // const copyURL = () => {
-    //     const currentURL = window.location.href;
-    //     navigator.clipboard.writeText(currentURL).then(() => {
-    //         toast({
-    //             title: "Account created",
-    //             description: "Copied",
-    //             status: "success",
-    //             duration: 3000,
-    //             isClosable: true,
-    //         });
-    //     });
-    // };
+    const copyURL = () => {
+        const currentURL = window.location.href;
+        navigator.clipboard.writeText(currentURL).then(() => {
+            toast({
+                title: "Success.",
+                status: "success",
+                description: "Profile link copied.",
+                duration: 3000,
+                isClosable: true,
+            });
+        });
+    };
 
     return (
         <VStack gap={4} alignItems={"start"}>
@@ -55,17 +56,16 @@ const UserHeader = () => {
                         <BsInstagram size={24} cursor={"pointer"} />
                     </Box>
                     <Box className="icon-container">
-                        <CgMoreO size={24} cursor={"pointer"} />
-                        {/* <Menu>
+                        <Menu>
                             <MenuButton>
-                                
+                                <CgMoreO size={24} cursor={"pointer"} />
                             </MenuButton>
                             <Portal>
                                 <MenuList bg={"gray.dark"}>
                                     <MenuItem bg={"gray.dark"} onClick={copyURL}>Copy Link</MenuItem>
                                 </MenuList>
                             </Portal>
-                        </Menu> */}
+                        </Menu>
                     </Box>
                 </Flex>
             </Flex>
