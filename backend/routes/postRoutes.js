@@ -10,10 +10,10 @@ router.get('/:id', getPostById);
 
 // POST routes:
 router.post('/create', checkAuth, createPost);
-router.post('/reply/:id', checkAuth, replyToPost);
 
 // PUT routes:
 router.put('/like/:id', checkAuth, likePost);
+router.put('/reply/:id', checkAuth, replyToPost);
 
 // DELETE routes:
 router.delete('/:id', checkAuth, deletePost);
