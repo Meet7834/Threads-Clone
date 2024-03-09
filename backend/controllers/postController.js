@@ -2,6 +2,23 @@ import { v2 as cloudinary } from "cloudinary";
 import Post from '../models/postModel.js';
 import User from "../models/userModel.js";
 
+const getUserPosts = async (req, res) => {
+    const { username } = req.params;
+    try {
+        const user = await User.findOne({ username });
+        if (!user) {
+            return res.status(404).json({ error: "User not found!" });
+        }
+
+        const posts = await Post.find({ postedBy: user._id }).sort({ createdAt: -1 }); // this sorts by newest first
+
+        res.status(200).json(posts);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+        console.log('Error in getting user posts!', err);
+    }
+}
+
 const getFeedPosts = async (req, res) => {
     try {
         const userId = req.user._id;
@@ -89,6 +106,11 @@ const deletePost = async (req, res) => {
             return res.status(401).json({ error: 'Unauthorized to delete post!' });
         }
 
+        if (post.img) {
+            const imgId = post.img.split("/").pop().split(".")[0];
+            await cloudinary.uploader.destroy(imgId);
+        }
+
         await Post.findByIdAndDelete(req.params.id);
 
         res.status(200).json({ message: 'Succesfully deleted post!' });
@@ -159,4 +181,4 @@ const replyToPost = async (req, res) => {
     }
 }
 
-export { createPost, deletePost, getFeedPosts, getPostById, likePost, replyToPost };
+export { getUserPosts, createPost, deletePost, getFeedPosts, getPostById, likePost, replyToPost };

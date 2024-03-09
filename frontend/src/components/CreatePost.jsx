@@ -22,6 +22,7 @@ import { useRef, useState } from "react";
 import usePreviewImg from "../hooks/usePreviewImg";
 import { BsFillImageFill } from "react-icons/bs";
 import { useRecoilValue } from "recoil";
+import { useNavigate } from "react-router-dom";
 import userAtom from "../atoms/userAtom";
 import useShowToast from "../hooks/useShowToast";
 
@@ -35,6 +36,7 @@ const CreatePost = () => {
     const [remainingChar, setRemainingChar] = useState(MAX_CHAR);
     const user = useRecoilValue(userAtom);
     const showToast = useShowToast();
+    const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
 
     const handleTextChange = (e) => {
@@ -69,6 +71,7 @@ const CreatePost = () => {
 
             showToast("Success", "Post created successfully", "success");
             onClose();
+            navigate(0)
             setPostText("");
             setImgUrl("");
         } catch (error) {

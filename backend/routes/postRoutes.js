@@ -1,12 +1,13 @@
 import express from "express";
 import checkAuth from "../middlewares/checkAuth.js";
-import { getFeedPosts, getPostById, createPost, replyToPost, likePost, deletePost } from "../controllers/postController.js";
+import { getUserPosts, getFeedPosts, getPostById, createPost, replyToPost, likePost, deletePost } from "../controllers/postController.js";
 
 const router = express.Router();
 
 // GET routes:
 router.get('/feed', checkAuth, getFeedPosts);
 router.get('/:id', getPostById);
+router.get('/user/:username', getUserPosts);
 
 // POST routes:
 router.post('/create', checkAuth, createPost);
