@@ -7,11 +7,11 @@ import postRoutes from './routes/postRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import { v2 as cloudinary } from 'cloudinary';
 import messageRoutes from "./routes/messageRoutes.js"
+import { app, server } from "./socket/socket.js";
 
 dotenv.config(); // configuring .env file
 connectDB(); // connect to db
 
-const app = express();
 const PORT = process.env.PORT || 8080;
 
 cloudinary.config({
@@ -32,6 +32,6 @@ app.use('/api/posts', postRoutes);
 app.use("/api/messages", messageRoutes);
 
 // start the server
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`Server started on port: ${PORT}`);
 })
