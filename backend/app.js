@@ -6,7 +6,7 @@ import connectDB from './db/connectDB.js';
 import postRoutes from './routes/postRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import { v2 as cloudinary } from 'cloudinary';
-import bodyParser from 'body-parser';
+import messageRoutes from "./routes/messageRoutes.js"
 
 dotenv.config(); // configuring .env file
 connectDB(); // connect to db
@@ -29,6 +29,7 @@ app.use(morgan('tiny')); // this module logs the api requests to the console
 // Routes
 app.use('/api/users', userRoutes);
 app.use('/api/posts', postRoutes);
+app.use("/api/messages", messageRoutes);
 
 // start the server
 app.listen(PORT, () => {
