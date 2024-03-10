@@ -15,15 +15,16 @@ import {
 	useDisclosure,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { Navigate, useNavigate } from 'react-router-dom'
 import userAtom from "../atoms/userAtom";
 import useShowToast from "../hooks/useShowToast";
+import postsAtom from "../atoms/postsAtom";
 
-const Actions = ({ post: post_ }) => {
+const Actions = ({ post }) => {
 	const user = useRecoilValue(userAtom);
-	const [liked, setLiked] = useState(post_?.likes.includes(user?._id));
-	const [post, setPost] = useState(post_);
+	const [liked, setLiked] = useState(post.likes.includes(user?._id));
+	const [posts, setPosts] = useRecoilState(postsAtom);
 	const [isLiking, setIsLiking] = useState(false);
 	const [isReplying, setIsReplying] = useState(false);
 	const [reply, setReply] = useState("");
@@ -49,10 +50,22 @@ const Actions = ({ post: post_ }) => {
 
 			if (!liked) {
 				// add the id of the current user to post.likes array
-				setPost({ ...post, likes: [...post?.likes, user._id] });
+				const updatedPosts = posts.map((p) => {
+					if (p._id === post._id) {
+						return { ...p, likes: [...p.likes, user._id] };
+					}
+					return p;
+				});
+				setPosts(updatedPosts);
 			} else {
 				// remove the id of the current user from post.likes array
-				setPost({ ...post, likes: post?.likes.filter((id) => id !== user._id) });
+				const updatedPosts = posts.map((p) => {
+					if (p._id === post._id) {
+						return { ...p, likes: p.likes.filter((id) => id !== user._id) };
+					}
+					return p;
+				});
+				setPosts(updatedPosts);
 			}
 
 			setLiked(!liked);
@@ -78,10 +91,17 @@ const Actions = ({ post: post_ }) => {
 			const data = await res.json();
 			if (data.error) return showToast("Error", data.error, "error");
 
-			setPost({ ...post, replies: [...post.replies, data.reply] });
+			const updatedPosts = posts.map((p) => {
+				if (p._id === post._id) {
+					return { ...p, replies: [...p.replies, data] };
+				}
+				return p;
+			});
+			
+			setPosts(updatedPosts);
 			showToast("Success", "Reply posted successfully", "success");
 			onClose();
-			navigate(0);
+			// navigate(0);
 			setReply("");
 		} catch (error) {
 			showToast("Error", error.message, "error");
