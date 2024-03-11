@@ -1,5 +1,5 @@
 import { SearchIcon } from "@chakra-ui/icons";
-import { Box, Button, Flex, Input, Skeleton, SkeletonCircle, Text, useColorModeValue } from "@chakra-ui/react";
+import { Avatar, Box, Button, Flex, Input, Skeleton, SkeletonCircle, Text, useColorModeValue } from "@chakra-ui/react";
 import Conversation from "../components/Conversation";
 import { GiConversation } from "react-icons/gi";
 import MessageContainer from "../components/MessageContainer";
@@ -10,6 +10,7 @@ import { conversationsAtom, selectedConversationAtom } from "../atoms/messagesAt
 import userAtom from "../atoms/userAtom";
 import { useSocket } from "../context/SocketContext";
 
+
 const ChatPage = () => {
 	const [searchingUser, setSearchingUser] = useState(false);
 	const [loadingConversations, setLoadingConversations] = useState(true);
@@ -18,7 +19,11 @@ const ChatPage = () => {
 	const [conversations, setConversations] = useRecoilState(conversationsAtom);
 	const currentUser = useRecoilValue(userAtom);
 	const showToast = useShowToast();
+	const [allUsers, setAllUsers] = useState([]);
+	const [loadingUsers, setLoadingUsers] = useState(true);
+	const [searchSuggestions, setSearchSuggestions] = useState([]);
 	const { socket, onlineUsers } = useSocket();
+
 
 	useEffect(() => {
 		const getConversations = async () => {
@@ -38,17 +43,55 @@ const ChatPage = () => {
 			}
 		};
 
+		const fetchAllUsers = async () => {
+			try {
+				const res = await fetch("/api/users/allusers");
+				const data = await res.json();
+				if (data.error) {
+					showToast("Error", data.error, "error");
+					return;
+				}
+				// console.log('users data', data);
+				setAllUsers(data);
+			} catch (error) {
+				showToast("Error", error.message, "error");
+			} finally {
+				setLoadingUsers(false);
+			}
+		};
+
+		fetchAllUsers();
 		getConversations();
 	}, [showToast, setConversations]);
+
+	const handleInputChange = (e) => {
+		const searchText = e.target.value;
+		setSearchText(searchText);
+
+		if (searchText === "") {
+			setSearchSuggestions([]);
+			setSearchingUser(false);
+			return;
+		}
+
+		const regex = new RegExp(`^${searchText}`, 'i');
+		const filteredUsers = allUsers.filter(user => regex.test(user.username)).slice(0, 3);
+		setSearchSuggestions(filteredUsers);
+		// console.log(searchSuggestions);
+	}
 
 	const handleConversationSearch = async (e) => {
 		e.preventDefault();
 		setSearchingUser(true);
+		// if (username) setSearchText(username);
+
 		if (searchText === "") {
 			setSearchingUser(false);
 			return;
 		}
+
 		try {
+			// console.log('this should execute after');
 			const res = await fetch(`/api/users/profile/${searchText}`);
 			const searchedUser = await res.json();
 			if (searchedUser.error) {
@@ -122,12 +165,31 @@ const ChatPage = () => {
 					</Text>
 					<form onSubmit={handleConversationSearch}>
 						<Flex alignItems={"center"} gap={2}>
-							<Input placeholder='Search for a user' onChange={(e) => setSearchText(e.target.value)} />
+							<Input placeholder='Search for a user' onChange={handleInputChange} />
 							<Button size={"sm"} onClick={handleConversationSearch} isLoading={searchingUser}>
 								<SearchIcon />
 							</Button>
 						</Flex>
 					</form>
+
+					{searchSuggestions.length > 0 ?
+						<Flex direction={"column"} gap={4} padding={'10px'}>
+							{searchSuggestions.map((user) => <>
+								<Flex gap={2} key={user._id}>
+									<Avatar src={user.profilePic} />
+									<Box>
+										<Text fontSize={"sm"} fontWeight={"bold"}>
+											{user.username}
+										</Text>
+										<Text color={"gray.light"} fontSize={"sm"}>
+											{user.name}
+										</Text>
+									</Box>
+								</Flex >
+							</>)}
+						</Flex>
+						: <></>
+					}
 
 					{loadingConversations &&
 						[0, 1, 2, 3, 4].map((_, i) => (
@@ -151,6 +213,7 @@ const ChatPage = () => {
 							/>
 						))}
 				</Flex>
+
 				{!selectedConversation._id && (
 					<Flex
 						flex={70}
@@ -168,7 +231,7 @@ const ChatPage = () => {
 
 				{selectedConversation._id && <MessageContainer />}
 			</Flex>
-		</Box>
+		</Box >
 	);
 };
 

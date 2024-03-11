@@ -1,3 +1,1 @@
-1. Add a favicon
-2. Add suggested users field
-3. Deployment
+1. Deployment
