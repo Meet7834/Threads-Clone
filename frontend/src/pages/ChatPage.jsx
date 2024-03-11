@@ -1,14 +1,14 @@
 import { SearchIcon } from "@chakra-ui/icons";
 import { Avatar, Box, Button, Flex, Input, Skeleton, SkeletonCircle, Text, useColorModeValue } from "@chakra-ui/react";
-import Conversation from "../components/Conversation";
-import { GiConversation } from "react-icons/gi";
-import MessageContainer from "../components/MessageContainer";
 import { useEffect, useState } from "react";
-import useShowToast from "../hooks/useShowToast";
+import { GiConversation } from "react-icons/gi";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { conversationsAtom, selectedConversationAtom } from "../atoms/messagesAtom";
 import userAtom from "../atoms/userAtom";
+import Conversation from "../components/Conversation";
+import MessageContainer from "../components/MessageContainer";
 import { useSocket } from "../context/SocketContext";
+import useShowToast from "../hooks/useShowToast";
 
 
 const ChatPage = () => {
@@ -172,6 +172,7 @@ const ChatPage = () => {
 						</Flex>
 					</form>
 
+					<div>Suggestions</div>
 					{searchSuggestions.length > 0 ?
 						<Flex direction={"column"} gap={4} padding={'10px'}>
 							{searchSuggestions.map((user) => <>
@@ -204,6 +205,7 @@ const ChatPage = () => {
 							</Flex>
 						))}
 
+					<div>Chats</div>
 					{!loadingConversations &&
 						conversations.map((conversation) => (
 							<Conversation
