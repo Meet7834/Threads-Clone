@@ -71,7 +71,18 @@ const PostPage = () => {
     return (
         <>
             <Flex>
-                <Flex w={"full"} alignItems={"center"} gap={3}>
+                <Flex
+                    w={"full"}
+                    alignItems={"center"}
+                    gap={3}
+                    onClick={(e) => {
+                        e.preventDefault();
+                        navigate(`/${user.username}`);
+                    }}
+                    _hover={{
+                        cursor: "pointer",
+                    }}
+                >
                     <Avatar src={user.profilePic} size={"md"} name={user.name} />
                     <Flex>
                         <Text fontSize={"sm"} fontWeight={"bold"}>{user.username}</Text>
@@ -105,10 +116,10 @@ const PostPage = () => {
 
             <Flex justifyContent={"space-between"}>
                 <Flex gap="2" alignItems={"center"}>
-                    <Text fontSize={"2xl"}>👋</Text>
-                    <Text color={"gray.light"}>Get the app to like, reply and post.</Text>
+                    <Text fontSize={"2xl"}>👀</Text>
+                    <Text color={"gray.light"}>Replies</Text>
                 </Flex>
-                <Button>Get</Button>
+                {/* <Button></Button> */}
             </Flex>
 
             <Divider my={4} />

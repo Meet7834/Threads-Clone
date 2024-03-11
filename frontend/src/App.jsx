@@ -1,5 +1,5 @@
 import { Container, Box } from "@chakra-ui/react"
-import { Navigate, Routes, Route } from "react-router-dom"
+import { Navigate, Routes, Route, useLocation } from "react-router-dom"
 import UserPage from "./pages/UserPage"
 import PostPage from "./pages/PostPage"
 import Header from "./components/Header"
@@ -12,18 +12,19 @@ import CreatePost from "./components/CreatePost"
 import ChatPage from "./pages/ChatPage"
 
 function App() {
-    const user = useRecoilValue(userAtom);
+	const user = useRecoilValue(userAtom);
+	const { pathname } = useLocation();
 
-    return (
-        <Box position={"relative"} w='full'>
-            <Container maxW='620px'>
-                <Header />
-                <Routes>
-                    <Route path='/' element={user ? <HomePage /> : <Navigate to='/auth' />} />
-                    <Route path='/auth' element={!user ? <AuthPage /> : <Navigate to='/' />} />
-                    <Route path='/update' element={user ? <UpdateProfilePage /> : <Navigate to='/auth' />} />
+	return (
+		<Box position={"relative"} w='full'>
+			<Container maxW={pathname === "/" ? { base: "900px", md: "1000px" } : "900px"}>
+				<Header />
+				<Routes>
+					<Route path='/' element={user ? <HomePage /> : <Navigate to='/auth' />} />
+					<Route path='/auth' element={!user ? <AuthPage /> : <Navigate to='/' />} />
+					<Route path='/update' element={user ? <UpdateProfilePage /> : <Navigate to='/auth' />} />
 
-                    <Route
+					<Route
 						path='/:username'
 						element={
 							user ? (
@@ -32,8 +33,8 @@ function App() {
 									<CreatePost />
 								</>
 							) : (
-                                    <UserPage />
-                                )
+								<UserPage />
+							)
 						}
 					/>
 					<Route path='/:username/post/:pid' element={<PostPage />} />
@@ -41,7 +42,7 @@ function App() {
 				</Routes>
 			</Container>
 		</Box>
-    );
+	);
 };
 
 export default App;

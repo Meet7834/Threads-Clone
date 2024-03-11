@@ -28,6 +28,48 @@ const getUser = async (req, res) => {
     }
 }
 
+const getSuggestedUsers = async (req, res) => {
+    try {
+        // exclude the current user from suggested users array and exclude users that current user is already following
+        const userId = req.user._id;
+
+        const usersFollowedByYou = await User.findById(userId).select("following");
+
+        const users = await User.aggregate([
+            {
+                $match: {
+                    _id: { $ne: userId },
+                },
+            },
+            {
+                $sample: { size: 10 },
+            },
+        ]);
+        const filteredUsers = users.filter((user) => !usersFollowedByYou.following.includes(user._id));
+        const suggestedUsers = filteredUsers.slice(0, 4);
+
+        suggestedUsers.forEach((user) => (user.password = null));
+
+        res.status(200).json(suggestedUsers);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+const getAllUsers = async (req, res) => {
+    try {
+        let users;
+        users = await User.find({}).select("-password").select("-updatedAt");
+
+        if (!users) return res.status(400).json({ error: 'No users in database' });
+
+        res.status(200).json(users);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+        console.log('Error in getting all users', err.message);
+    }
+}
+
 const signUpUser = async (req, res) => {
     try {
         const { name, email, username, password } = req.body;
@@ -196,4 +238,4 @@ const updateUser = async (req, res) => {
     }
 }
 
-export { getUser, loginUser, signUpUser, logOutUser, followUnfollowUser, updateUser };
+export { getUser, getSuggestedUsers, getAllUsers, loginUser, signUpUser, logOutUser, followUnfollowUser, updateUser };

@@ -44,6 +44,10 @@ const ChatPage = () => {
 	const handleConversationSearch = async (e) => {
 		e.preventDefault();
 		setSearchingUser(true);
+		if (searchText === "") {
+			setSearchingUser(false);
+			return;
+		}
 		try {
 			const res = await fetch(`/api/users/profile/${searchText}`);
 			const searchedUser = await res.json();
@@ -99,7 +103,7 @@ const ChatPage = () => {
 		<Box
 			position={"absolute"}
 			left={"50%"}
-			w={{ base: "100%", md: "80%", lg: "750px" }}
+			w={{ base: "100%", md: "80%", lg: "1000px" }}
 			p={4}
 			transform={"translateX(-50%)"}
 		>

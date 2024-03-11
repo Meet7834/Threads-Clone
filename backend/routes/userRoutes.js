@@ -1,10 +1,12 @@
 import express from "express";
-import { getUser, loginUser, signUpUser, logOutUser, followUnfollowUser, updateUser } from '../controllers/userController.js'
+import { getUser, getSuggestedUsers, getAllUsers, loginUser, signUpUser, logOutUser, followUnfollowUser, updateUser } from '../controllers/userController.js'
 import checkAuth from "../middlewares/checkAuth.js";
 
 const router = express.Router();
 
 // GET routes:
+router.get('/allusers', getAllUsers);
+router.get('/suggested', checkAuth, getSuggestedUsers);
 router.get('/profile/:query', getUser);
 
 // POST routes:
