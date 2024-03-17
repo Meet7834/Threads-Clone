@@ -1,6 +1,7 @@
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import express from 'express';
+import path from 'path';
 import morgan from 'morgan';
 import connectDB from './db/connectDB.js';
 import postRoutes from './routes/postRoutes.js';
@@ -13,6 +14,7 @@ dotenv.config(); // configuring .env file
 connectDB(); // connect to db
 
 const PORT = process.env.PORT || 8080;
+const __dirname = path.resolve();
 
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -30,6 +32,15 @@ app.use(cookieParser());
 app.use('/api/users', userRoutes);
 app.use('/api/posts', postRoutes);
 app.use("/api/messages", messageRoutes);
+
+if (process.env.NODE_ENV.trim() === "production") {
+	app.use(express.static(path.join(__dirname, "/frontend/dist")));
+
+	// serve the frontend
+	app.get("*", (req, res) => {
+		res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
+	});
+}
 
 // start the server
 server.listen(PORT, () => {
