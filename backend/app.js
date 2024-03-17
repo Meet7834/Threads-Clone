@@ -9,9 +9,11 @@ import userRoutes from './routes/userRoutes.js';
 import { v2 as cloudinary } from 'cloudinary';
 import messageRoutes from "./routes/messageRoutes.js"
 import { app, server } from "./socket/socket.js";
+import job from './cron/cron.js'
 
 dotenv.config(); // configuring .env file
 connectDB(); // connect to db
+job.start(); // this will send request to render every 15 minitues so that our app doesn't have any downtime
 
 const PORT = process.env.PORT || 8080;
 const __dirname = path.resolve();
@@ -26,7 +28,7 @@ cloudinary.config({
 app.use(express.json({ limit: "50mb" })); // To parse JSON data in the req.body
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-// app.use(morgan('tiny')); // this module logs the api requests to the console
+app.use(morgan('tiny')); // this module logs the api requests to the console
 
 // Routes
 app.use('/api/users', userRoutes);
