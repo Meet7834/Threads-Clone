@@ -60,7 +60,21 @@ This project is a clone of Instagram Threads with added chatting functionality. 
     CLOUDINARY_CLOUD_NAME=your_cloudinary_credentials
     CLOUDINARY_API_KEY=your_cloudinary_credentials
     CLOUDINARY_API_SECRET=your_cloudinary_credentials
+    JWT_SECRET=your_secret
     ```
+
+5. [If you are on windows]:
+
+   Change these two scripts in package.json file at the root location of project to:
+
+    ```
+    "scripts": {
+        ...
+        "dev": "SET NODE_ENV=development & nodemon backend/app.js",
+        "start": "SET NODE_ENV=production & node backend/app.js",
+        ...
+      },
+    ``` 
 
 5. Start the backend server:
 
